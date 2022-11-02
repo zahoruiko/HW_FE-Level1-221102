@@ -58,7 +58,6 @@ _request.getUserData = function () {
         data.email +
         '<br>Status=' +
         data.status
-      return data
     })
 }
 
