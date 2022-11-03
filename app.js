@@ -1,13 +1,6 @@
-// Работа с REST API: GET-запрос, отправка PUT-запроса и проверка результата его выполнения
 let _html = {}
 let _request = {}
-let userId = 4013 // Пользователь с ID=8 - не существует, поэтому был выбран существующий в базе сайта
-let _postObj = {
-    id: userId, 
-    name: 'Andreas Papandreu3',
-    email: 'fake.mailbox7@fake-site.com',
-    status: 'active'
-  }
+let userId = 3482; // Пользователь с ID=8 - не существует, поэтому был выбран существующий в базе сайта
 
 _html.buttons =
   '<h1>Work with REST API</h1><hr/>' +
@@ -27,13 +20,18 @@ document.addEventListener('DOMContentLoaded', function () {
     _request.getUserData()
   })
   document.getElementById('putUserData').addEventListener('click', function () {
-    _request.putUserData()
+    let _userDataObj = {
+      id: userId, 
+      name: 'Andreas Papandreu3',
+      email: 'fake.mailbox7@fake-site.com',
+      status: 'active'
+    }
+    _request.putUserData(_userDataObj)
   })
 })
 
 // Запрос информации о пользователе через REST
 _request.getUserData = function () {
-  // Пользователь с ID=8 - не существует, поэтому был выбран существующий в базе сайта, то есть: 4021
   fetch('https://gorest.co.in/public/v2/users/' + userId, {
     method: 'GET',
     headers: {
@@ -58,11 +56,12 @@ _request.getUserData = function () {
         data.email +
         '<br>Status=' +
         data.status
+      return data
     })
 }
 
 // Изменение информации о пользователе на сервере
-_request.putUserData = function () {
+_request.putUserData = function (_putObj) {
   fetch('https://gorest.co.in/public/v2/users/' + userId, {
     method: 'PUT',
     headers: {
@@ -71,7 +70,7 @@ _request.putUserData = function () {
       authorization:
         'Bearer c811c9f73d5563a56be4227d60309b197ef7339bb94ac3eb5ddf3f8b3c206aab'
     },
-    body: JSON.stringify(_postObj)
+    body: JSON.stringify(_putObj)
   })
     .then(function (response) {
       return response.json()
@@ -90,11 +89,14 @@ _request.putUserData = function () {
 
       // Проверяем результат изменения данных на удаленном сервере  
       if (
-        _postObj.name == data.name &&
-        _postObj.email == data.email &&
-        _postObj.status == data.status
+        _putObj.name == data.name &&
+        _putObj.email == data.email &&
+        _putObj.status == data.status
       ) {
         alert('SUCCESS!')
+      } else {
+        console.log(reject);
+        alert('PUT is failed!')
       }
     })
 }
